@@ -20,31 +20,19 @@ src/
     ├── app.routes.server.ts
     │
     ├── models/
-    │   ├── organization.model.ts
-    │   └── user.model.ts
     │
     ├── services/
     │   ├── organizacion.service.ts
-    │   ├── organization.spec.ts
-    │   ├── user.model.ts
-    │   └── user.spec.ts
     │
     ├── organizacion-list/
-    │   ├── organization-list.ts
-    │   ├── organization-list.html
     │   ├── organizacion-list.css
-    │   └── organization-list.spec.ts
     │
     ├── usuario-list/
-    │   ├── user-list.ts
     │   ├── usuario-list.html
     │   └── usuario-list.css
     │
     └── confirm-dialog/
-        ├── organization-list.ts
-        ├── organization-list.html
         ├── organizacion-list.css
-        └── organization-list.spec.ts
 ```
 
 ---
