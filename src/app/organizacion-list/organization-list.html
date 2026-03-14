@@ -1,0 +1,110 @@
+<h2>Organizations</h2>
+
+<!-- Search: search by name -->
+<p> <input
+  type="text"
+  [formControl]="searchControl"
+  placeholder="Search by name..."
+/> </p>
+
+<!-- Status messages -->
+<p *ngIf="loading">Loading...</p>
+<p *ngIf="!loading && errorMsg">{{ errorMsg }}</p>
+
+<!-- Message if there are no organizations -->
+<ul class="list" *ngIf="!loading && !errorMsg && organizations.length > 0">
+  <!-- List of organizations -->
+  <li class="card" *ngFor="let org of visibleOrganizations; trackBy: trackById" (click)="selectOrganization(org)">
+
+    <!-- Name with truncation if it exceeds 15 characters and expand button -->
+    <div>
+      <span class="name">
+      {{
+        expanded[org._id] || org.name.length <= 15
+          ? org.name
+          : (org.name | slice:0:15) + '...'
+      }}
+      </span>
+
+      <!-- Button to show more or less if the name is long -->
+      <button *ngIf="org.name.length > 15"
+              class="btn"
+              (click)="toggleExpand(org._id)">
+        {{ expanded[org._id] ? 'Show less' : 'Show more' }}
+      </button>
+    </div>
+
+    <!-- ID and action buttons -->
+    <div>
+      <span class="muted">{{ org._id }}</span>
+
+      <!-- EDIT BUTTON -->
+      <button type="button"
+              class="btn"
+              (click)="edit(org)">
+        Edit
+      </button>
+
+      <!-- DELETE BUTTON -->
+      <button type="button"
+              class="btn delete-btn"
+              (click)="confirmDelete(org._id, org.name)">
+        X
+      </button>
+    </div>
+
+  </li>
+</ul>
+
+<!-- Buttons to show more/less organizations if the limit is exceeded -->
+<button
+  *ngIf="!showAllOrganizations && organizations.length > limit"
+  class="btn"
+  (click)="showMore()">
+
+  Show more
+</button>
+<button
+  *ngIf="showAllOrganizations"
+  class="btn"
+  (click)="showAllOrganizations = false">
+
+  Show less
+</button>
+
+<p *ngIf="!loading && !errorMsg && organizations.length === 0">
+  There are no organizations.
+</p>
+
+<!-- Form to add/edit organization -->
+<button type="button" class="btn" (click)="showFormHandler()">
+  Add
+</button>
+
+<div *ngIf="showForm" class="card">
+
+  <h3>{{ isEditing ? 'Edit Organization' : 'New Organization' }}</h3>
+
+  <form [formGroup]="organizationForm" (ngSubmit)="save()">
+
+    <label>Name:</label>
+    <input type="text" formControlName="name" />
+
+    <button type="submit"
+            class="btn"
+            [disabled]="organizationForm.invalid">
+      {{ isEditing ? 'Update' : 'Save' }}
+    </button>
+
+  </form>
+
+</div>
+
+<!-- Button to reload the list -->
+<button type="button" class="btn" (click)="load()">
+  Reload
+</button>
+
+@if (selectedOrganization) {
+  <app-organization-user-manager [organization]="selectedOrganization"></app-organization-user-manager>
+}

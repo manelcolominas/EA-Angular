@@ -1,0 +1,199 @@
+<h2>Users</h2>
+
+<!-- Search: search by name -->
+<p>
+  <input
+    type="text"
+    [formControl]="searchControl"
+    placeholder="Search by name..."
+  />
+</p>
+
+<!-- Status messages -->
+<p *ngIf="loading">Loading...</p>
+<p *ngIf="!loading && errorMsg">{{ errorMsg }}</p>
+
+<p *ngIf="!loading && !errorMsg && users.length === 0">No users found.</p>
+
+<!-- Button to show new user form -->
+<button
+  *ngIf="!isFormVisible"
+  type="button"
+  class="btn"
+  (click)="showForm()"
+  style="margin-bottom: 15px"
+>
+  Add New User
+</button>
+
+<!-- Form to create or edit user -->
+<div *ngIf="isFormVisible" class="card">
+  <!-- Dynamic title depending on whether you are editing or creating a user -->
+  <h3>{{ isEditing ? 'Edit User' : 'New User' }}</h3>
+
+  <form [formGroup]="userForm" (ngSubmit)="save()">
+    <!-- Organization selection field -->
+    <div style="margin-bottom: 10px">
+      <label>Organization:</label>
+      <select
+        formControlName="organization"
+        style="width: 100%; padding: 5px"
+      >
+        <option value="" disabled selected>Select an organization</option>
+        <option *ngFor="let o of organizations" [value]="o._id">
+          {{ o.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Name field -->
+    <div style="margin-bottom: 10px">
+      <label>Name:</label>
+      <input
+        type="text"
+        formControlName="name"
+        style="width: 100%; padding: 5px"
+      />
+    </div>
+
+    <!-- Email field -->
+    <div style="margin-bottom: 10px">
+      <label>Email:</label>
+      <input
+        type="email"
+        formControlName="email"
+        style="width: 100%; padding: 5px"
+      />
+      <small
+        style="color: red"
+        *ngIf="
+          userForm.get('email')?.hasError('email') &&
+          userForm.get('email')?.touched
+        "
+      >
+        Invalid email format.
+      </small>
+    </div>
+
+    <!-- Password fields (only for new user or if you want to change it) -->
+    <div style="margin-bottom: 10px">
+      <label>Password:</label>
+      <input
+        type="password"
+        formControlName="password"
+        style="width: 100%; padding: 5px"
+      />
+      <small
+        style="color: red"
+        *ngIf="
+          userForm.get('password')?.hasError('minlength') &&
+          userForm.get('password')?.touched
+        "
+      >
+        Password must be at least 6 characters long.
+      </small>
+    </div>
+
+    <!-- Password confirmation field -->
+    <div style="margin-bottom: 15px">
+      <label>Repeat password:</label>
+      <input
+        type="password"
+        formControlName="confirmPassword"
+        style="width: 100%; padding: 5px"
+      />
+      <small
+        style="color: red"
+        *ngIf="
+          userForm.hasError('passwordMismatch') &&
+          userForm.get('confirmPassword')?.touched
+        "
+      >
+        Passwords do not match.
+      </small>
+    </div>
+
+    <!-- Save and cancel buttons -->
+    <div>
+      <button type="submit" class="btn" [disabled]="userForm.invalid">
+        Save
+      </button>
+      <button
+        type="button"
+        class="btn"
+        (click)="resetForm()"
+        style="margin-left: 10px"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Users table -->
+<div *ngIf="!loading && !errorMsg && visibleUsers.length > 0">
+  <table
+    style="
+      width: 100%;
+      text-align: left;
+      margin-top: 20px;
+      border-collapse: collapse;
+    "
+  >
+    <!-- Table header -->
+    <thead>
+      <tr style="border-bottom: 1px solid #ccc">
+        <th>Name</th>
+        <th>Email</th>
+        <th>Organization</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <!-- Table body with visible users -->
+    <tbody>
+      <tr
+        *ngFor="let u of visibleUsers"
+        style="border-bottom: 1px solid #eee"
+      >
+        <td style="padding: 8px 0">{{ u.name }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ organizationLabel(u) }}</td>
+        <td>
+          <button (click)="edit(u)">Edit</button>
+          <button (click)="confirmDelete(u._id, u.name)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="margin-top: 10px">
+  <!-- Buttons to show more/less users if the limit is exceeded -->
+  <button
+    *ngIf="!showAllUsers && filteredUsers.length > limit"
+    class="btn"
+    (click)="showMore()"
+  >
+    Show more
+  </button>
+
+  <button
+    *ngIf="showAllUsers"
+    class="btn"
+    (click)="showAllUsers = false"
+    style="margin-left: 10px"
+  >
+    Show less
+  </button>
+</div>
+
+<!-- Button to reload the data -->
+<button
+  type="button"
+  class="btn"
+  (click)="load()"
+  style="margin-top: 15px"
+>
+  Reload
+</button>

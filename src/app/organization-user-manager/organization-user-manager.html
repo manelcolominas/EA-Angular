@@ -1,0 +1,35 @@
+<div class="user-manager">
+  <h3>Manage Users for {{ organization.name }}</h3>
+
+  <div class="lists-container">
+    <div class="list-section">
+      <h4>Users in Organization</h4>
+      <ul class="user-list">
+        @for (user of organizationUsers; track user._id) {
+          <li>
+            {{ user.name }} ({{ user.email }})
+            <button (click)="removeUser(user)">Remove</button>
+          </li>
+        }
+        @if (organizationUsers.length === 0) {
+          <li>No users in this organization.</li>
+        }
+      </ul>
+    </div>
+
+    <div class="list-section">
+      <h4>Available Users</h4>
+      <ul class="user-list">
+        @for (user of availableUsers; track user._id) {
+          <li>
+            {{ user.name }} ({{ user.email }})
+            <button (click)="addUser(user)">Add</button>
+          </li>
+        }
+        @if (availableUsers.length === 0) {
+          <li>No available users to add.</li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>
