@@ -54,6 +54,10 @@ export class UserService {
     });
   }
 
+  updateUserOrganization(id: string, organizationId: string): Observable<User> {
+    return this.http.put<User>(`${this.baseUrl}/users/${id}/organization`, { organization: organizationId });
+  }
+
   deleteUser(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
   }

@@ -40,32 +40,21 @@ export class OrganizationUserManager implements OnInit, OnChanges {
 
   addUser(user: User): void {
     if (!this.organization) return;
-
-    // Assuming we update the user to belong to this organization
-    // We need to send the organization ID.
-    // However, the updateUser signature in UserService requires (id, name, email, password, organizationId).
-    // This is a bit clunky as we might not have the password here or want to send it.
-    // Let's check UserService again.
-
-    this.userService.updateUser(user._id, user.name, user.email, user.password || '', this.organization._id).subscribe(() => {
+    this.userService.updateUserOrganization(user._id, this.organization._id).subscribe(() => {
         this.loadUsers();
     });
   }
 
   removeUser(user: User): void {
-     // To remove, we might set organization to null or empty string.
-     // But the backend might expect a valid organization ID.
-     // If the backend allows null/empty, we can do this.
-     // Let's assume we can assign to a "default" or "no organization" if possible,
-     // or maybe we just can't "remove" without assigning to another one?
-     // For now, I'll try sending an empty string or null if the type allows.
-     // The type signature says string.
-
-     // Let's check if there is an endpoint to just change organization? No.
-     // I'll assume sending an empty string clears it, or maybe I should check if there is a way to set it to null.
-
-     this.userService.updateUser(user._id, user.name, user.email, user.password || '', '').subscribe(() => {
-         this.loadUsers();
-     });
+    if (!this.organization) return;
+    this.organizationService.removeUserFromOrganization(this.organization._id, user._id).subscribe({
+      next: () => {
+        this.loadUsers();
+      },
+      error: (error) => {
+        console.error('Error removing user from organization:', error);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
+    });
   }
 }

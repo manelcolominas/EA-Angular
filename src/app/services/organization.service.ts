@@ -45,4 +45,9 @@ export class OrganizationService {
   getUsersByOrganization(organizationId: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.baseUrl}/organizations/${organizationId}/users`);
   }
+
+  //Función: eliminar usuario de una organización
+  removeUserFromOrganization(organizationId: string, userId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/organizations/${organizationId}/users/${userId}`);
+  }
 }

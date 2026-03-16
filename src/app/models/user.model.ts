@@ -5,9 +5,7 @@ export interface User {
   name: string;
   email: string;
   password?: string;
-  organization: Organization;
+  organization?: Organization;
   createdAt?: string;
   updatedAt?: string;
 }
-
-

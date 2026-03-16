@@ -76,7 +76,17 @@ export class UserList implements OnInit {
       const term = value?.toLowerCase() ?? '';
 
       this.filteredUsers = this.users.filter((user) => user.name.toLowerCase().includes(term));
+      this.showAllUsers = false;
+      this.cdr.detectChanges();
     });
+  }
+
+  //Getter: get visible users based on showAllUsers flag
+  get visibleUsers(): User[] {
+    if (this.showAllUsers) {
+      return this.filteredUsers;
+    }
+    return this.filteredUsers.slice(0, this.limit);
   }
 
   load(): void {
@@ -143,12 +153,11 @@ export class UserList implements OnInit {
     this.showAllUsers = true;
   }
 
-  get visibleUsers(): User[] {
-    if (this.showAllUsers) {
-      return this.filteredUsers;
-    }
-    return this.filteredUsers.slice(0, this.limit);
+  //Function: show less
+  showLess(): void {
+    this.showAllUsers = false;
   }
+
 
   //Function: save (for both create and update)
   save(): void {
